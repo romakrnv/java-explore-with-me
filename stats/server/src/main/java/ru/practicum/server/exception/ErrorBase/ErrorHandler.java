@@ -1,7 +1,6 @@
 package ru.practicum.server.exception.ErrorBase;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -25,14 +24,6 @@ public class ErrorHandler {
     public ErrorResponse handleThrowable(final Throwable e) {
         return new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.toString(),
                 "Server error",
-                e.getMessage());
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorResponse handleThrowable(final DataIntegrityViolationException e) {
-        return new ErrorResponse(HttpStatus.CONFLICT.toString(),
-                "Conflict error",
                 e.getMessage());
     }
 }

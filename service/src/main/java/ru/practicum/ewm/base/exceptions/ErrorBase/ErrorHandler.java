@@ -2,6 +2,7 @@ package ru.practicum.ewm.base.exceptions.ErrorBase;
 
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -34,6 +35,15 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.CONFLICT)
+    public ErrorResponse handleDataIntegrityViolationException(final DataIntegrityViolationException e) {
+        return new ErrorResponse(
+                HttpStatus.CONFLICT.toString(),
+                "Duplicate key value",
+                e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.CONFLICT)
     public ErrorResponse handleConflictException(final DuplicatedDataException e) {
         return new ErrorResponse(
                 HttpStatus.CONFLICT.toString(),
@@ -60,7 +70,6 @@ public class ErrorHandler {
     }
 
 
-    // Для валидации через jakarta.validation.constraints
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse validationMethodArgumentNotValidException(final MethodArgumentNotValidException e) {
@@ -71,7 +80,6 @@ public class ErrorHandler {
                 String.format("Field: %s. Invalid field value. Value: %s", field, e.getFieldValue(field)));
     }
 
-    // Для валидации через jakarta.validation.constraints
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleConstraintViolationException(final ConstraintViolationException e) {
