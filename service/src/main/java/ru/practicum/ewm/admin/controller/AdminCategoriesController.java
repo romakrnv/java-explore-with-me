@@ -3,13 +3,11 @@ package ru.practicum.ewm.admin.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.admin.service.category.AdminCategoryService;
 import ru.practicum.ewm.base.dto.category.CategoryDto;
 import ru.practicum.ewm.base.dto.category.NewCategoryDto;
-import ru.practicum.ewm.base.exceptions.DuplicatedDataException;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -31,14 +29,7 @@ public class AdminCategoriesController {
     @ResponseStatus(HttpStatus.OK)
     public CategoryDto update(@PathVariable(PV_CAT_ID) Long categoryId,
                               @RequestBody @Valid NewCategoryDto request) {
-        CategoryDto result;
-        try {
-            result = service.update(request, categoryId);
-        } catch (DataIntegrityViolationException e) {
-            throw new DuplicatedDataException(e.getMessage(), e);
-        }
-
-        return result;
+        return service.update(request, categoryId);
     }
 
     @DeleteMapping(M_CAT_ID)

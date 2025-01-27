@@ -4,7 +4,6 @@ import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -81,12 +80,7 @@ public class PersonalUserEventServiceImpl implements PersonalUserEventService {
         checkEventDate(request.getEventDate());
 
         Event event = EventMapper.mapToEntity(request, findCategoryById(request.getCategory()), findUserById(userId));
-        try {
-            event = eventRepository.save(event);
-        } catch (DataIntegrityViolationException e) {
-            throw new ConflictException(e.getMessage(), e);
-        }
-
+        event = eventRepository.save(event);
         return EventMapper.mapToDto(event);
     }
 
@@ -133,13 +127,7 @@ public class PersonalUserEventServiceImpl implements PersonalUserEventService {
         }
 
         Event updatedEvent = EventMapper.updateUserFields(findEvent, request, category);
-
-        try {
-            updatedEvent = eventRepository.save(updatedEvent);
-        } catch (DataIntegrityViolationException e) {
-            throw new ConflictException(e.getMessage(), e);
-        }
-
+        updatedEvent = eventRepository.save(updatedEvent);
         return EventMapper.mapToDto(updatedEvent);
     }
 
@@ -179,11 +167,8 @@ public class PersonalUserEventServiceImpl implements PersonalUserEventService {
             if (participantLimit.equals(0L) || (waitingParticipants <= availableParticipants && !findEvent.getRequestModeration())) {
                 confirmedRequests = requests.stream()
                         .peek(elem -> {
-                            if (!elem.getStatus().equals(Statuses.CONFIRMED)) {
-                                elem.setStatus(Statuses.CONFIRMED);
-                            } else {
-                                throw new ConflictException(String.format("Request with ID %d has already been confirmed", elem.getId()));
-                            }
+                            elem.setStatus(checkStatus(elem.getStatus(), Statuses.CONFIRMED,
+                                    "Request with ID " + elem.getId() + " has already been confirmed"));
                         })
                         .map(RequestMapper::mapToDto)
                         .toList();
@@ -193,11 +178,8 @@ public class PersonalUserEventServiceImpl implements PersonalUserEventService {
                 confirmedRequests = requests.stream()
                         .limit(availableParticipants)
                         .peek(elem -> {
-                            if (!elem.getStatus().equals(Statuses.CONFIRMED)) {
-                                elem.setStatus(Statuses.CONFIRMED);
-                            } else {
-                                throw new ConflictException(String.format("Request with ID %d has already been confirmed", elem.getId()));
-                            }
+                            elem.setStatus(checkStatus(elem.getStatus(), Statuses.CONFIRMED,
+                                    "Request with ID " + elem.getId() + " has already been confirmed"));
                         })
                         .map(RequestMapper::mapToDto)
                         .toList();
@@ -205,11 +187,8 @@ public class PersonalUserEventServiceImpl implements PersonalUserEventService {
                 rejectedRequests = requests.stream()
                         .skip(availableParticipants)
                         .peek(elem -> {
-                            if (!elem.getStatus().equals(Statuses.REJECTED)) {
-                                elem.setStatus(Statuses.REJECTED);
-                            } else {
-                                throw new ConflictException(String.format("Request with ID %d has already been rejected", elem.getId()));
-                            }
+                            elem.setStatus(checkStatus(elem.getStatus(), Statuses.REJECTED,
+                                    "Request with ID " + elem.getId() + " has already been rejected"));
                         })
                         .map(RequestMapper::mapToDto)
                         .toList();
@@ -219,14 +198,15 @@ public class PersonalUserEventServiceImpl implements PersonalUserEventService {
         } else {
             throw new ConflictException(String.format("When trying to edit requests, the status %s was incorrect.", status));
         }
-
-        try {
-            eventRepository.flush();
-            requestRepository.flush();
-        } catch (DataIntegrityViolationException e) {
-            throw new ConflictException(e.getMessage(), e);
-        }
-
+        eventRepository.flush();
+        requestRepository.flush();
         return new EventRequestStatusUpdateResult(confirmedRequests, rejectedRequests);
+    }
+
+    private Statuses checkStatus(Statuses entityStatus, Statuses expectedStatus, String message) {
+        if (entityStatus.equals(expectedStatus)) {
+            throw new ConflictException(message);
+        }
+        return expectedStatus;
     }
 }

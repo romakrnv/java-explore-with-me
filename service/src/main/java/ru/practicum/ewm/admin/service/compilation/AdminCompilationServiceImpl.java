@@ -61,13 +61,7 @@ public class AdminCompilationServiceImpl implements AdminCompilationService {
     @Transactional
     public CompilationDto update(UpdateCompilationRequest request, Long compId) {
         Compilation updatedCompilation = CompilationMapper.updateFields(findById(compId), request, findEvents(request.getEvents()));
-
-        try {
-            updatedCompilation = compilationRepository.save(updatedCompilation);
-        } catch (DataIntegrityViolationException e) {
-            throw new ConflictException(e.getMessage(), e);
-        }
-
+        updatedCompilation = compilationRepository.save(updatedCompilation);
         return CompilationMapper.mapToDto(updatedCompilation);
     }
 

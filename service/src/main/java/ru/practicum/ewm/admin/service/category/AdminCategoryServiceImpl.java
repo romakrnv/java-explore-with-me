@@ -1,9 +1,9 @@
 package ru.practicum.ewm.admin.service.category;
 
 import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,17 +20,11 @@ import ru.practicum.ewm.base.repository.EventRepository;
 @Slf4j
 @Service
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
+@RequiredArgsConstructor
 public class AdminCategoryServiceImpl implements AdminCategoryService {
 
     CategoryRepository categoryRepository;
     EventRepository eventRepository;
-
-
-    @Autowired
-    public AdminCategoryServiceImpl(CategoryRepository categoryRepository, EventRepository eventRepository) {
-        this.categoryRepository = categoryRepository;
-        this.eventRepository = eventRepository;
-    }
 
     public Category findById(Long categoryId) {
         return categoryRepository.findById(categoryId)
