@@ -1,9 +1,9 @@
 package ru.practicum.ewm.personal.service.event;
 
 import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -35,22 +35,12 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
+@RequiredArgsConstructor
 public class PersonalUserEventServiceImpl implements PersonalUserEventService {
     UserRepository userRepository;
     EventRepository eventRepository;
     CategoryRepository categoryRepository;
     RequestRepository requestRepository;
-
-    @Autowired
-    public PersonalUserEventServiceImpl(UserRepository userRepository,
-                                        EventRepository eventRepository,
-                                        CategoryRepository categoryRepository,
-                                        RequestRepository requestRepository) {
-        this.userRepository = userRepository;
-        this.eventRepository = eventRepository;
-        this.categoryRepository = categoryRepository;
-        this.requestRepository = requestRepository;
-    }
 
     private User findUserById(Long userId) {
         return userRepository.findById(userId)

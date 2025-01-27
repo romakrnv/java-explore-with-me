@@ -29,10 +29,10 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseStatus(HttpStatus.CONFLICT)
     public ErrorResponse handleThrowable(final DataIntegrityViolationException e) {
-        return new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.toString(),
-                "Server error",
+        return new ErrorResponse(HttpStatus.CONFLICT.toString(),
+                "Conflict error",
                 e.getMessage());
     }
 }
