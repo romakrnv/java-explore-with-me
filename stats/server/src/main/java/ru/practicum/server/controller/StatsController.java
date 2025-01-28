@@ -23,12 +23,16 @@ public class StatsController {
 
     @GetMapping("/stats")
     @ResponseStatus(HttpStatus.OK)
-    public List<ViewStatsDto> get(@RequestParam @DateTimeFormat(pattern = DATE_PATTERN) LocalDateTime start,
-                                  @RequestParam @DateTimeFormat(pattern = DATE_PATTERN) LocalDateTime end,
+    public List<ViewStatsDto> get(@RequestParam(required = false) @DateTimeFormat(pattern = DATE_PATTERN) LocalDateTime start,
+                                  @RequestParam(required = false) @DateTimeFormat(pattern = DATE_PATTERN) LocalDateTime end,
                                   @RequestParam(required = false) List<String> uris,
                                   @RequestParam(defaultValue = "false") Boolean unique) {
+        if (start == null || end == null) {
+            throw new BadRequestException("Не задана дата начала или окончания периода поиска статистики!");
+        }
+
         if (start.isAfter(end)) {
-            throw new BadRequestException("Start date is later than end date");
+            throw new BadRequestException("Дата начала позже даты окончания!");
         }
         return service.get(start, end, uris, unique);
     }
