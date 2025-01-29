@@ -2,7 +2,6 @@ package ru.practicum.ewm.common.service.compilation;
 
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -11,12 +10,12 @@ import ru.practicum.ewm.base.dto.compilation.CompilationDto;
 import ru.practicum.ewm.base.exceptions.NotFoundException;
 import ru.practicum.ewm.base.mapper.CompilationMapper;
 import ru.practicum.ewm.base.models.Compilation;
-import ru.practicum.ewm.base.repository.CompilationRepository;
+import ru.practicum.ewm.base.repository.compilation.CompilationRepository;
 
 import java.util.Collection;
 import java.util.List;
 
-@Slf4j
+
 @Service
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public class CommonCompilationsServiceImpl implements CommonCompilationsService {
@@ -29,7 +28,7 @@ public class CommonCompilationsServiceImpl implements CommonCompilationsService 
 
     public Compilation findById(Long compId) {
         return compilationRepository.findById(compId)
-                .orElseThrow(() -> new NotFoundException(String.format("Подборка c ID %d не найдена", compId)));
+                .orElseThrow(() -> new NotFoundException(String.format("Selection with ID %d not found", compId)));
     }
 
     @Override

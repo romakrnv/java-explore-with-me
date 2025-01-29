@@ -1,9 +1,8 @@
 package ru.practicum.ewm.admin.service.compilation;
 
 import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,28 +14,23 @@ import ru.practicum.ewm.base.exceptions.NotFoundException;
 import ru.practicum.ewm.base.mapper.CompilationMapper;
 import ru.practicum.ewm.base.models.Compilation;
 import ru.practicum.ewm.base.models.Event;
-import ru.practicum.ewm.base.repository.CompilationRepository;
-import ru.practicum.ewm.base.repository.EventRepository;
+import ru.practicum.ewm.base.repository.compilation.CompilationRepository;
+import ru.practicum.ewm.base.repository.event.EventRepository;
 
 import java.util.Set;
 
-@Slf4j
+
 @Service
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
+@RequiredArgsConstructor
 public class AdminCompilationServiceImpl implements AdminCompilationService {
 
     CompilationRepository compilationRepository;
     EventRepository eventRepository;
 
-    @Autowired
-    public AdminCompilationServiceImpl(CompilationRepository compilationRepository, EventRepository eventRepository) {
-        this.compilationRepository = compilationRepository;
-        this.eventRepository = eventRepository;
-    }
-
     private Compilation findById(Long compId) {
         return compilationRepository.findById(compId)
-                .orElseThrow(() -> new NotFoundException(String.format("Подборка c ID %d не найдена", compId)));
+                .orElseThrow(() -> new NotFoundException(String.format("Selection with ID %d not found", compId)));
     }
 
     private Set<Event> findEvents(Set<Long> events) {
@@ -48,10 +42,14 @@ public class AdminCompilationServiceImpl implements AdminCompilationService {
     public CompilationDto save(NewCompilationDto request) {
         Compilation compilation = CompilationMapper.mapToEntity(request, findEvents(request.getEvents()));
 
+        if (compilationRepository.existsByTitle(request.getTitle())) {
+            throw new ConflictException(String.format("A selection with the %s heading already exists", compilation.getTitle()));
+        }
+
         try {
             compilation = compilationRepository.save(compilation);
         } catch (DataIntegrityViolationException e) {
-            throw new ConflictException(String.format("Подборка с заголовком %s уже существует", compilation.getTitle()), e);
+            throw new ConflictException(e.getMessage(), e);
         }
 
         return CompilationMapper.mapToDto(compilation);
@@ -61,7 +59,13 @@ public class AdminCompilationServiceImpl implements AdminCompilationService {
     @Transactional
     public CompilationDto update(UpdateCompilationRequest request, Long compId) {
         Compilation updatedCompilation = CompilationMapper.updateFields(findById(compId), request, findEvents(request.getEvents()));
-        updatedCompilation = compilationRepository.save(updatedCompilation);
+
+        try {
+            updatedCompilation = compilationRepository.save(updatedCompilation);
+        } catch (DataIntegrityViolationException e) {
+            throw new ConflictException(e.getMessage(), e);
+        }
+
         return CompilationMapper.mapToDto(updatedCompilation);
     }
 

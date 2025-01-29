@@ -4,16 +4,15 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.ewm.base.dto.ParticipationRequestDto;
+import ru.practicum.ewm.base.dto.request.ParticipationRequestDto;
 import ru.practicum.ewm.base.dto.event.*;
 import ru.practicum.ewm.personal.service.event.PersonalUserEventService;
 
 import java.util.Collection;
 
-@Slf4j
+
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/users/{user-id}/events")

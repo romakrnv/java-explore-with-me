@@ -1,10 +1,9 @@
 package ru.practicum.ewm.admin.service.user;
 
 import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -15,36 +14,37 @@ import ru.practicum.ewm.base.exceptions.NotFoundException;
 import ru.practicum.ewm.base.mapper.UserMapper;
 import ru.practicum.ewm.base.models.User;
 import ru.practicum.ewm.base.exceptions.ConflictException;
-import ru.practicum.ewm.base.repository.UserRepository;
+import ru.practicum.ewm.base.repository.user.UserRepository;
 
 import java.util.Collection;
 import java.util.List;
 
-@Slf4j
+
 @Service
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
+@RequiredArgsConstructor
 public class AdminUserServiceImpl implements AdminUserService {
 
     UserRepository userRepository;
 
-    @Autowired
-    public AdminUserServiceImpl(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
-
     private User findById(Long userId) {
         return userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException(String.format("Пользователь c ID %d не найден", userId)));
+                .orElseThrow(() -> new NotFoundException(String.format("User id %d not found", userId)));
     }
 
     @Override
     @Transactional
     public UserDto save(NewUserRequest request) {
         User user = UserMapper.mapToEntity(request);
+
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new ConflictException(String.format("Email %s is already exist", user.getEmail()));
+        }
+
         try {
             user = userRepository.save(user);
         } catch (DataIntegrityViolationException e) {
-            throw new ConflictException(String.format("Email %s уже занят", user.getEmail()), e);
+            throw new ConflictException(e.getMessage(), e);
         }
         return UserMapper.mapToDto(user);
     }

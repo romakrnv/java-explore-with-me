@@ -10,7 +10,7 @@ import java.lang.annotation.*;
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface IfNotNullIsNotEmpty {
-    String message() default "Если поле не содержит null, то оно не должно быть пустым";
+    String message() default "If the field does not contain null, then it should not be empty.";
 
     Class<?>[] groups() default {};
 

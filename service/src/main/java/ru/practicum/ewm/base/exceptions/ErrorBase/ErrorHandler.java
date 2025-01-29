@@ -2,7 +2,6 @@ package ru.practicum.ewm.base.exceptions.ErrorBase;
 
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -35,15 +34,6 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorResponse handleDataIntegrityViolationException(final DataIntegrityViolationException e) {
-        return new ErrorResponse(
-                HttpStatus.CONFLICT.toString(),
-                "Duplicate key value",
-                e.getMessage());
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.CONFLICT)
     public ErrorResponse handleConflictException(final DuplicatedDataException e) {
         return new ErrorResponse(
                 HttpStatus.CONFLICT.toString(),
@@ -63,9 +53,10 @@ public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleBadRequestException(final BadRequestException e) {
+        log.error(HttpStatus.BAD_REQUEST.toString(), e.getLocalizedMessage(), e.getMessage());
         return new ErrorResponse(
                 HttpStatus.BAD_REQUEST.toString(),
-                "The request is not written correctly.",
+                "The request was made incorrectly",
                 e.getMessage());
     }
 
@@ -97,4 +88,3 @@ public class ErrorHandler {
                 e.getMessage());
     }
 }
-

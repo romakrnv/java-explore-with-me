@@ -3,10 +3,10 @@ package ru.practicum.ewm.personal.service.request;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.ewm.base.dto.ParticipationRequestDto;
+import ru.practicum.ewm.base.dto.request.ParticipationRequestDto;
 import ru.practicum.ewm.base.enums.States;
 import ru.practicum.ewm.base.enums.Statuses;
 import ru.practicum.ewm.base.exceptions.BadRequestException;
@@ -16,14 +16,14 @@ import ru.practicum.ewm.base.mapper.RequestMapper;
 import ru.practicum.ewm.base.models.Event;
 import ru.practicum.ewm.base.models.Request;
 import ru.practicum.ewm.base.models.User;
-import ru.practicum.ewm.base.repository.EventRepository;
-import ru.practicum.ewm.base.repository.RequestRepository;
-import ru.practicum.ewm.base.repository.UserRepository;
+import ru.practicum.ewm.base.repository.event.EventRepository;
+import ru.practicum.ewm.base.repository.request.RequestRepository;
+import ru.practicum.ewm.base.repository.user.UserRepository;
 
 import java.util.Collection;
 import java.util.List;
 
-@Slf4j
+
 @Service
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 @RequiredArgsConstructor
@@ -81,7 +81,11 @@ public class PersonalUserRequestServiceImpl implements PersonalUserRequestServic
         }
 
         Request request = RequestMapper.mapToEntity(event, user);
-        request = requestRepository.save(request);
+        try {
+            request = requestRepository.save(request);
+        } catch (DataIntegrityViolationException e) {
+            throw new ConflictException(e.getMessage(), e);
+        }
         return RequestMapper.mapToDto(request);
     }
 
@@ -101,7 +105,12 @@ public class PersonalUserRequestServiceImpl implements PersonalUserRequestServic
         Request request = findByIdAndRequesterId(requestId, userId);
 
         request.setStatus(Statuses.CANCELED);
-        request = requestRepository.save(request);
+
+        try {
+            request = requestRepository.save(request);
+        } catch (DataIntegrityViolationException e) {
+            throw new ConflictException(e.getMessage(), e);
+        }
         return RequestMapper.mapToDto(request);
     }
 }

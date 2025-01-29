@@ -2,7 +2,6 @@ package ru.practicum.ewm.admin.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.admin.service.compilation.AdminCompilationService;
@@ -11,7 +10,7 @@ import ru.practicum.ewm.base.dto.compilation.NewCompilationDto;
 import ru.practicum.ewm.base.dto.compilation.UpdateCompilationRequest;
 
 
-@Slf4j
+
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/admin/compilations")

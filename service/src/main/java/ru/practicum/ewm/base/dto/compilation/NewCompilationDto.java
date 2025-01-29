@@ -18,7 +18,7 @@ public class NewCompilationDto {
 
     Boolean pinned;
 
-    @NotBlank(message = "Заголовок подборки событий не может отсутствовать или быть пустым")
+    @NotBlank(message = "The event collection header cannot be missing or empty")
     @Length(min = 1, max = 50)
     String title;
 }

@@ -12,9 +12,9 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class LocationDto {
-    @NotNull(message = "Широта должна быть указана")
+    @NotNull(message = "The latitude must be specified")
     Float lat;
 
-    @NotNull(message = "Долгота должна быть указана")
+    @NotNull(message = "The longitude must be specified")
     Float lon;
 }

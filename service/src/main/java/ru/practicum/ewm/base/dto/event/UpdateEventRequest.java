@@ -7,6 +7,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.validator.constraints.Length;
 import ru.practicum.ewm.base.dto.location.LocationDto;
+import ru.practicum.ewm.base.util.DatePattern;
 import ru.practicum.ewm.base.util.IfNotNullIsNotEmpty.IfNotNullIsNotEmpty;
 
 import java.time.LocalDateTime;
@@ -22,14 +23,14 @@ public abstract class UpdateEventRequest {
     @Length(min = 20, max = 2000)
     String annotation;
 
-    @Positive(message = "ID категории не может быть отрицательным числом")
+    @Positive(message = "The category ID cannot be a negative number.")
     Long category;
 
     @IfNotNullIsNotEmpty
     @Length(min = 20, max = 7000)
     String description;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DatePattern.DATE_TIME_PATTERN)
     LocalDateTime eventDate;
 
     @Valid
@@ -37,7 +38,7 @@ public abstract class UpdateEventRequest {
 
     Boolean paid;
 
-    @PositiveOrZero(message = "Ограничение на количество участников не может быть отрицательным числом")
+    @PositiveOrZero(message = "The limit on the number of participants cannot be a negative number.")
     Long participantLimit;
 
     Boolean requestModeration;

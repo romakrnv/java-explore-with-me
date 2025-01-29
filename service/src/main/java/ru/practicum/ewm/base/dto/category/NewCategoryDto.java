@@ -13,7 +13,7 @@ import org.hibernate.validator.constraints.Length;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class NewCategoryDto {
-    @NotBlank(message = "Название добавляемой категории не может быть пустым!")
+    @NotBlank(message = "The name of the added category cannot be empty!")
     @Length(min = 1, max = 50)
     String name;
 }
