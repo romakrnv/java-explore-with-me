@@ -3,7 +3,6 @@ package ru.practicum.ewm.personal.service.event;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -70,12 +69,7 @@ public class PersonalUserEventServiceImpl implements PersonalUserEventService {
         checkEventDate(request.getEventDate());
 
         Event event = EventMapper.mapToEntity(request, findCategoryById(request.getCategory()), findUserById(userId));
-        try {
-            event = eventRepository.save(event);
-        } catch (DataIntegrityViolationException e) {
-            throw new ConflictException(e.getMessage(), e);
-        }
-
+        event = eventRepository.save(event);
         return EventMapper.mapToDto(event);
     }
 
@@ -122,13 +116,7 @@ public class PersonalUserEventServiceImpl implements PersonalUserEventService {
         }
 
         Event updatedEvent = EventMapper.updateUserFields(findEvent, request, category);
-
-        try {
-            updatedEvent = eventRepository.save(updatedEvent);
-        } catch (DataIntegrityViolationException e) {
-            throw new ConflictException(e.getMessage(), e);
-        }
-
+        updatedEvent = eventRepository.save(updatedEvent);
         return EventMapper.mapToDto(updatedEvent);
     }
 

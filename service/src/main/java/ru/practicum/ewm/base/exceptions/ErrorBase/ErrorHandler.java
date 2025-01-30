@@ -2,6 +2,7 @@ package ru.practicum.ewm.base.exceptions.ErrorBase;
 
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -85,6 +86,13 @@ public class ErrorHandler {
     public ErrorResponse handleThrowable(final Throwable e) {
         return new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.toString(),
                 "Server error",
+                e.getMessage());
+    }
+
+    @ExceptionHandler
+    public ErrorResponse handleDataIntegrityViolationException(final DataIntegrityViolationException e) {
+        return new ErrorResponse(HttpStatus.CONFLICT.toString(),
+                "Conflict",
                 e.getMessage());
     }
 }

@@ -3,7 +3,6 @@ package ru.practicum.ewm.personal.service.comment;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -57,13 +56,7 @@ public class PersonalUserCommentServiceImpl implements PersonalUserCommentServic
         }
 
         Comment comment = CommentMapper.mapToEntity(request, user, event);
-
-        try {
-            comment = commentRepository.save(comment);
-        } catch (DataIntegrityViolationException e) {
-            throw new ConflictException(e.getMessage(), e);
-        }
-
+        comment = commentRepository.save(comment);
         return CommentMapper.mapToDto(comment);
     }
 
@@ -99,13 +92,7 @@ public class PersonalUserCommentServiceImpl implements PersonalUserCommentServic
         }
 
         Comment updatedComment = CommentMapper.updateFields(comment, request);
-
-        try {
-            updatedComment = commentRepository.save(updatedComment);
-        } catch (DataIntegrityViolationException e) {
-            throw new ConflictException(e.getMessage(), e);
-        }
-
+        updatedComment = commentRepository.save(updatedComment);
         return CommentMapper.mapToDto(updatedComment);
     }
 

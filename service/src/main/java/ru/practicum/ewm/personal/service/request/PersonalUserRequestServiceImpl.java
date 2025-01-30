@@ -3,7 +3,6 @@ package ru.practicum.ewm.personal.service.request;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.base.dto.request.ParticipationRequestDto;
@@ -81,11 +80,7 @@ public class PersonalUserRequestServiceImpl implements PersonalUserRequestServic
         }
 
         Request request = RequestMapper.mapToEntity(event, user);
-        try {
-            request = requestRepository.save(request);
-        } catch (DataIntegrityViolationException e) {
-            throw new ConflictException(e.getMessage(), e);
-        }
+        request = requestRepository.save(request);
         return RequestMapper.mapToDto(request);
     }
 
@@ -105,12 +100,7 @@ public class PersonalUserRequestServiceImpl implements PersonalUserRequestServic
         Request request = findByIdAndRequesterId(requestId, userId);
 
         request.setStatus(Statuses.CANCELED);
-
-        try {
-            request = requestRepository.save(request);
-        } catch (DataIntegrityViolationException e) {
-            throw new ConflictException(e.getMessage(), e);
-        }
+        request = requestRepository.save(request);
         return RequestMapper.mapToDto(request);
     }
 }

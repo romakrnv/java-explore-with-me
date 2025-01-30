@@ -3,7 +3,6 @@ package ru.practicum.ewm.admin.service.compilation;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.base.dto.compilation.CompilationDto;
@@ -45,13 +44,7 @@ public class AdminCompilationServiceImpl implements AdminCompilationService {
         if (compilationRepository.existsByTitle(request.getTitle())) {
             throw new ConflictException(String.format("A selection with the %s heading already exists", compilation.getTitle()));
         }
-
-        try {
-            compilation = compilationRepository.save(compilation);
-        } catch (DataIntegrityViolationException e) {
-            throw new ConflictException(e.getMessage(), e);
-        }
-
+        compilation = compilationRepository.save(compilation);
         return CompilationMapper.mapToDto(compilation);
     }
 
@@ -59,13 +52,7 @@ public class AdminCompilationServiceImpl implements AdminCompilationService {
     @Transactional
     public CompilationDto update(UpdateCompilationRequest request, Long compId) {
         Compilation updatedCompilation = CompilationMapper.updateFields(findById(compId), request, findEvents(request.getEvents()));
-
-        try {
-            updatedCompilation = compilationRepository.save(updatedCompilation);
-        } catch (DataIntegrityViolationException e) {
-            throw new ConflictException(e.getMessage(), e);
-        }
-
+        updatedCompilation = compilationRepository.save(updatedCompilation);
         return CompilationMapper.mapToDto(updatedCompilation);
     }
 

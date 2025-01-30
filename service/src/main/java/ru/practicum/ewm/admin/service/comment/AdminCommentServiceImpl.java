@@ -4,7 +4,6 @@ import jakarta.persistence.criteria.Predicate;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
@@ -13,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.admin.dto.NewParamCommentDto;
 import ru.practicum.ewm.base.dto.comment.CommentFullDto;
 import ru.practicum.ewm.base.dto.comment.UpdateCommentRequest;
-import ru.practicum.ewm.base.exceptions.ConflictException;
 import ru.practicum.ewm.base.exceptions.NotFoundException;
 import ru.practicum.ewm.base.mapper.CommentMapper;
 import ru.practicum.ewm.base.models.Comment;
@@ -88,13 +86,7 @@ public class AdminCommentServiceImpl implements AdminCommentService {
     @Transactional
     public CommentFullDto update(UpdateCommentRequest request, Long comId) {
         Comment updatedComment = CommentMapper.updateFields(findById(comId), request);
-
-        try {
-            updatedComment = commentRepository.save(updatedComment);
-        } catch (DataIntegrityViolationException e) {
-            throw new ConflictException(e.getMessage(), e);
-        }
-
+        updatedComment = commentRepository.save(updatedComment);
         return CommentMapper.mapToDto(updatedComment);
     }
 

@@ -3,7 +3,6 @@ package ru.practicum.ewm.admin.service.user;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -40,12 +39,7 @@ public class AdminUserServiceImpl implements AdminUserService {
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new ConflictException(String.format("Email %s is already exist", user.getEmail()));
         }
-
-        try {
-            user = userRepository.save(user);
-        } catch (DataIntegrityViolationException e) {
-            throw new ConflictException(e.getMessage(), e);
-        }
+        user = userRepository.save(user);
         return UserMapper.mapToDto(user);
     }
 

@@ -3,7 +3,6 @@ package ru.practicum.ewm.admin.service.category;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.base.dto.category.CategoryDto;
@@ -38,13 +37,7 @@ public class AdminCategoryServiceImpl implements AdminCategoryService {
         if (categoryRepository.existsByName(request.getName())) {
             throw new ConflictException(String.format("category \"%s\" already exists", category.getName()));
         }
-
-        try {
-            category = categoryRepository.save(category);
-        } catch (DataIntegrityViolationException e) {
-            throw new ConflictException(e.getMessage(), e);
-        }
-
+        category = categoryRepository.save(category);
         return CategoryMapper.mapToDto(category);
     }
 

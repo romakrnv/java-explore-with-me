@@ -3,7 +3,6 @@ package ru.practicum.ewm.admin.service.event;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -79,13 +78,7 @@ public class AdminEventServiceImpl implements AdminEventService {
         }
 
         Event updatedEvent = EventMapper.updateAdminFields(findEvent, request, category);
-
-        try {
-            updatedEvent = eventRepository.save(updatedEvent);
-        } catch (DataIntegrityViolationException e) {
-            throw new ConflictException(e.getMessage(), e);
-        }
-
+        updatedEvent = eventRepository.save(updatedEvent);
         return EventMapper.mapToDto(updatedEvent);
     }
 }

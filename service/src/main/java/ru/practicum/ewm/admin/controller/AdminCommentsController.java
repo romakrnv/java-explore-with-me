@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.admin.dto.NewParamCommentDto;
 import ru.practicum.ewm.admin.service.comment.AdminCommentService;
@@ -27,6 +28,7 @@ public class AdminCommentsController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
+    @Validated
     public Collection<CommentFullDto> getComments(@RequestParam(required = false, defaultValue = "") String text,
                                                   @RequestParam(required = false, defaultValue = "") List<Long> users,
                                                   @RequestParam(required = false, defaultValue = "") List<Long> events,
