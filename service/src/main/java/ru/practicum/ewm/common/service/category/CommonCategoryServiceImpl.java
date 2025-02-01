@@ -2,7 +2,6 @@ package ru.practicum.ewm.common.service.category;
 
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -11,12 +10,12 @@ import ru.practicum.ewm.base.dto.category.CategoryDto;
 import ru.practicum.ewm.base.exceptions.NotFoundException;
 import ru.practicum.ewm.base.mapper.CategoryMapper;
 import ru.practicum.ewm.base.models.Category;
-import ru.practicum.ewm.base.repository.CategoryRepository;
+import ru.practicum.ewm.base.repository.category.CategoryRepository;
 
 import java.util.Collection;
 import java.util.List;
 
-@Slf4j
+
 @Service
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public class CommonCategoryServiceImpl implements CommonCategoryService {
@@ -28,7 +27,7 @@ public class CommonCategoryServiceImpl implements CommonCategoryService {
 
     public Category findById(Long catId) {
         return categoryRepository.findById(catId)
-                .orElseThrow(() -> new NotFoundException(String.format("Категория c ID %d не найдена", catId)));
+                .orElseThrow(() -> new NotFoundException(String.format("Category c ID %d not found", catId)));
     }
 
     @Override

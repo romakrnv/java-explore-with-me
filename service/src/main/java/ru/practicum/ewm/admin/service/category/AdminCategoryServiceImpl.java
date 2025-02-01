@@ -3,8 +3,6 @@ package ru.practicum.ewm.admin.service.category;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.base.dto.category.CategoryDto;
@@ -14,10 +12,10 @@ import ru.practicum.ewm.base.exceptions.ConflictException;
 import ru.practicum.ewm.base.exceptions.NotFoundException;
 import ru.practicum.ewm.base.mapper.CategoryMapper;
 import ru.practicum.ewm.base.models.Category;
-import ru.practicum.ewm.base.repository.CategoryRepository;
-import ru.practicum.ewm.base.repository.EventRepository;
+import ru.practicum.ewm.base.repository.category.CategoryRepository;
+import ru.practicum.ewm.base.repository.event.EventRepository;
 
-@Slf4j
+
 @Service
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 @RequiredArgsConstructor
@@ -28,18 +26,18 @@ public class AdminCategoryServiceImpl implements AdminCategoryService {
 
     public Category findById(Long categoryId) {
         return categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new NotFoundException(String.format("Категория c ID %d не найдена", categoryId)));
+                .orElseThrow(() -> new NotFoundException(String.format("Category c ID %d not found", categoryId)));
     }
 
     @Override
     @Transactional
     public CategoryDto save(NewCategoryDto request) {
         Category category = CategoryMapper.mapToEntity(request);
-        try {
-            category = categoryRepository.save(category);
-        } catch (DataIntegrityViolationException e) {
-            throw new ConflictException(String.format("Категория \"%s\" уже существует", category.getName()), e);
+
+        if (categoryRepository.existsByName(request.getName())) {
+            throw new ConflictException(String.format("category \"%s\" already exists", category.getName()));
         }
+        category = categoryRepository.save(category);
         return CategoryMapper.mapToDto(category);
     }
 
@@ -58,8 +56,8 @@ public class AdminCategoryServiceImpl implements AdminCategoryService {
     public void delete(Long categoryId) {
         Category category = findById(categoryId);
         if (eventRepository.existsByCategory(category)) {
-            throw new ConditionsNotMetException(String.format("Существуют события связанные с категорией %s, " +
-                    "удаление категории невозможно!", category.getName()));
+            throw new ConditionsNotMetException(String.format("There are events related to the %s category, " +
+                    "deleting a category is not possible.", category.getName()));
         } else {
             categoryRepository.deleteById(categoryId);
         }

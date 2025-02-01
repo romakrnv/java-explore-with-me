@@ -3,7 +3,6 @@ package ru.practicum.server.controller;
 import ru.practicum.dto.EndpointHitDto;
 import ru.practicum.dto.ViewStatsDto;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -13,7 +12,7 @@ import ru.practicum.server.service.StatService;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Slf4j
+
 @RequiredArgsConstructor
 @RestController
 public class StatsController {
@@ -28,11 +27,11 @@ public class StatsController {
                                   @RequestParam(required = false) List<String> uris,
                                   @RequestParam(defaultValue = "false") Boolean unique) {
         if (start == null || end == null) {
-            throw new BadRequestException("Не задана дата начала или окончания периода поиска статистики!");
+            throw new BadRequestException("The start or end date of the statistics search period is not set.");
         }
 
         if (start.isAfter(end)) {
-            throw new BadRequestException("Дата начала позже даты окончания!");
+            throw new BadRequestException("The start date is later than the end date!");
         }
         return service.get(start, end, uris, unique);
     }

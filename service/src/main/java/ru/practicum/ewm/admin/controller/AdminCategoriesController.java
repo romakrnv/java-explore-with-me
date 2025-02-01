@@ -2,7 +2,6 @@ package ru.practicum.ewm.admin.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -11,7 +10,7 @@ import ru.practicum.ewm.base.dto.category.CategoryDto;
 import ru.practicum.ewm.base.dto.category.NewCategoryDto;
 import ru.practicum.ewm.base.exceptions.DuplicatedDataException;
 
-@Slf4j
+
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/admin/categories")

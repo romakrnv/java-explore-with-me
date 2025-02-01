@@ -1,9 +1,8 @@
 package ru.practicum.ewm.admin.service.event;
 
 import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -18,26 +17,21 @@ import ru.practicum.ewm.base.exceptions.NotFoundException;
 import ru.practicum.ewm.base.mapper.EventMapper;
 import ru.practicum.ewm.base.models.Category;
 import ru.practicum.ewm.base.models.Event;
-import ru.practicum.ewm.base.repository.CategoryRepository;
-import ru.practicum.ewm.base.repository.EventRepository;
+import ru.practicum.ewm.base.repository.category.CategoryRepository;
+import ru.practicum.ewm.base.repository.event.EventRepository;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
-@Slf4j
+
 @Service
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
+@RequiredArgsConstructor
 public class AdminEventServiceImpl implements AdminEventService {
 
     EventRepository eventRepository;
     CategoryRepository categoryRepository;
-
-    @Autowired
-    public AdminEventServiceImpl(EventRepository eventRepository, CategoryRepository categoryRepository) {
-        this.eventRepository = eventRepository;
-        this.categoryRepository = categoryRepository;
-    }
 
     private Event findById(Long eventId) {
         return eventRepository.findById(eventId)

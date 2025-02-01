@@ -3,12 +3,11 @@ package ru.practicum.ewm.personal.service.event;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.ewm.base.dto.ParticipationRequestDto;
+import ru.practicum.ewm.base.dto.request.ParticipationRequestDto;
 import ru.practicum.ewm.base.dto.event.*;
 import ru.practicum.ewm.base.enums.States;
 import ru.practicum.ewm.base.enums.Statuses;
@@ -21,10 +20,10 @@ import ru.practicum.ewm.base.models.Category;
 import ru.practicum.ewm.base.models.Event;
 import ru.practicum.ewm.base.models.Request;
 import ru.practicum.ewm.base.models.User;
-import ru.practicum.ewm.base.repository.CategoryRepository;
-import ru.practicum.ewm.base.repository.EventRepository;
-import ru.practicum.ewm.base.repository.RequestRepository;
-import ru.practicum.ewm.base.repository.UserRepository;
+import ru.practicum.ewm.base.repository.category.CategoryRepository;
+import ru.practicum.ewm.base.repository.event.EventRepository;
+import ru.practicum.ewm.base.repository.request.RequestRepository;
+import ru.practicum.ewm.base.repository.user.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -32,7 +31,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Slf4j
+
 @Service
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 @RequiredArgsConstructor
@@ -132,7 +131,6 @@ public class PersonalUserEventServiceImpl implements PersonalUserEventService {
         Event findEvent = findByIdAndInitiatorId(eventId, userId);
         String status = request.getStatus();
 
-        // Отклонение всех заявок
         if (status.equals(Statuses.REJECTED.toString())) {
             boolean isConfirmedRequestExists = requests.stream()
                     .anyMatch(elem -> elem.getStatus().equals(Statuses.CONFIRMED));

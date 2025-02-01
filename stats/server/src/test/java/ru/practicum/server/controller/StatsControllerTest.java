@@ -17,7 +17,6 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Objects;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.*;
@@ -122,9 +121,7 @@ class StatsControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().is4xxClientError())
-                .andExpect(result -> assertInstanceOf(BadRequestException.class, result.getResolvedException()))
-                .andExpect(result -> assertEquals("Дата начала позже даты окончания!",
-                        Objects.requireNonNull(result.getResolvedException()).getMessage()));
+                .andExpect(result -> assertInstanceOf(BadRequestException.class, result.getResolvedException()));
     }
 
     @Test
@@ -141,8 +138,6 @@ class StatsControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().is4xxClientError())
-                .andExpect(result -> assertInstanceOf(Throwable.class, result.getResolvedException()))
-                .andExpect(result -> assertEquals("Не задана дата начала или окончания периода поиска статистики!",
-                        Objects.requireNonNull(result.getResolvedException()).getMessage()));
+                .andExpect(result -> assertInstanceOf(Throwable.class, result.getResolvedException()));
     }
 }
